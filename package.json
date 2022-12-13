@@ -4,7 +4,7 @@
   "description": "A back-end project, implementing, modeling and creating a (relational) database of a URL shortening system called Shortly: Links that fit in your pocket!",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts"
   },
   "repository": {
     "type": "git",
