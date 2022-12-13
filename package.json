@@ -4,7 +4,8 @@
   "description": "A back-end project, implementing, modeling and creating a (relational) database of a URL shortening system called Shortly: Links that fit in your pocket!",
   "main": "server.ts",
   "scripts": {
-    "start:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts"
+    "start:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts",
+    "husky": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -34,6 +35,9 @@
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
+    "git-commit-msg-linter": "^4.4.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
