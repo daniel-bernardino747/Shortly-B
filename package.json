@@ -1,0 +1,26 @@
+{
+  "name": "projeto17-shortly",
+  "version": "1.0.0",
+  "description": "A back-end project, implementing, modeling and creating a (relational) database of a URL shortening system called Shortly: Links that fit in your pocket!",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniel-bernardino747/Shortly-B.git"
+  },
+  "keywords": [
+    "url-shortening",
+    "nodejs",
+    "postgres",
+    "shortly",
+    "links"
+  ],
+  "author": "Daniel Bernardino de Souza",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/daniel-bernardino747/Shortly-B/issues"
+  },
+  "homepage": "https://github.com/daniel-bernardino747/Shortly-B#readme"
+}
