@@ -10,6 +10,10 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@/routes": ["src/routes/index"]
+    },
+    "baseUrl": "./"
   }
 }
