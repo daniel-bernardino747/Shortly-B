@@ -6,10 +6,14 @@ export interface Messages {
 export default {
   emailUnavailable: {
     status: 409,
-    message: 'Passwords do not match.',
+    message: 'An account with this email already exists.',
   } as Messages,
-  differentPasswords: {
+  bodyNotMatch: {
     status: 422,
-    message: 'Passwords do not match.',
+    message: 'The information in the body does not match.',
+  } as Messages,
+  userNotExist: {
+    status: 401,
+    message: 'Incorrect email or password.',
   } as Messages,
 }
