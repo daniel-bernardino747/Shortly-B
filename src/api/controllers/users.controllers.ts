@@ -1,7 +1,8 @@
-import { Messages } from '@/messages'
 import { Request, Response } from 'express'
-import { UserServices } from '../services/users.services'
 
+import { Messages } from '@/messages'
+
+import { UserServices } from '../services/users.services'
 class UserController {
   async create(request: Request, response: Response) {
     try {
@@ -20,14 +21,14 @@ class UserController {
     } catch (e) {
       const error = e as Messages
       if (error.status) {
-        return response.status(error.status).json({
+        return response.status(error.status).send({
           status: 'Error',
           code: error.status,
           message: error.message,
         })
       }
       console.error(e)
-      return response.sendStatus(500)
+      return response.status(500).send({ error: e })
     }
   }
 }
