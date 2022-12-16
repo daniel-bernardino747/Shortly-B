@@ -16,4 +16,8 @@ export default {
     status: 401,
     message: 'Incorrect email or password.',
   } as Messages,
+  invalidHeader: {
+    status: 401,
+    message: 'Authorization header was not informed.',
+  } as Messages,
 }
