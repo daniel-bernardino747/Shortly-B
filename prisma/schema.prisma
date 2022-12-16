@@ -27,3 +27,12 @@ model User {
 
   @@map("users")
 }
+
+model Session {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  user_id    String   @unique
+  created_at DateTime @default(now())
+
+  @@map("sessions")
+}
