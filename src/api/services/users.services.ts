@@ -1,8 +1,8 @@
 import { hash } from 'bcryptjs'
+import config from 'src/config'
 
 import { prismaClient as client } from '@/client'
 import msg from '@/messages'
-import config from 'src/config'
 
 interface IUserCreate {
   name: string
@@ -15,10 +15,12 @@ interface IUserRequest extends IUserCreate {
 
 class UserServices {
   async execute({ name, email, password, confirmPassword }: IUserRequest) {
+    if (!name && !email && !password && !confirmPassword) throw msg.bodyNotMatch
+
     const userExists = await this.findUser(email)
     if (userExists) throw msg.emailUnavailable
 
-    if (password !== confirmPassword) throw msg.differentPasswords
+    if (password !== confirmPassword) throw msg.bodyNotMatch
 
     await this.createUser({ name, email, password })
   }
