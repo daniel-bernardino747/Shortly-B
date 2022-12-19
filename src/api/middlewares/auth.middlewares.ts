@@ -1,15 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
+import { verify } from 'jsonwebtoken'
+import config from 'src/config'
 
-import { prismaClient as client } from '@/client'
 import msg, { Messages } from '@/messages'
 
-function findSession(token: string) {
-  return client.session.findFirst({
-    where: {
-      token,
-    },
-  })
-}
 async function ensureAuthenticate(
   request: Request,
   response: Response,
@@ -20,9 +14,7 @@ async function ensureAuthenticate(
     if (!authToken) throw msg.invalidHeader
     const token = authToken?.replace('Bearer ', '')
 
-    await findSession(token)
-
-    return next()
+    verify(token, config.keyJWT as string)
   } catch (e) {
     const error = e as Messages
     if (error.status) {
@@ -35,6 +27,7 @@ async function ensureAuthenticate(
     console.error(e)
     return response.status(500).send({ error: e })
   }
+  return next()
 }
 
 export { ensureAuthenticate }

@@ -22,7 +22,7 @@ class AuthenticateServices {
     const passwordMatch = await compare(password, userExists.password)
     if (!passwordMatch) throw msg.userNotExist
 
-    const token = await this.createToken(userExists.id)
+    const token = await this.createToken(userExists.id.toString())
 
     return token
   }
@@ -34,7 +34,6 @@ class AuthenticateServices {
       },
     })
   }
-
   async createToken(id: string) {
     return sign({}, config.keyJWT as string, {
       subject: id,
