@@ -30,6 +30,13 @@ export interface IUserRequest extends IUserCreate {
 export interface IUrlsServices {
   execute({ originalUrl, id }: IUrl): Promise<string>
   viewOne({ idParams }: { idParams: string }): Promise<IUrlToFront | null>
+  deleteOne({
+    idParams,
+    idUser,
+  }: {
+    idParams: string
+    idUser: number
+  }): Promise<void>
 }
 export interface IAuthServices {
   execute({ email, password }: IRequest): Promise<string>
