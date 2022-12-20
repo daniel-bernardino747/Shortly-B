@@ -1,7 +1,7 @@
 import * as express from 'express'
 
-import { AuthenticateController } from '@/controllers/auth.controllers'
-import { UserController } from '@/controllers/users.controllers'
+import { AuthenticateController } from '@controllers/auth.controllers'
+import { UserController } from '@controllers/users.controllers'
 
 const routes = express.Router()
 

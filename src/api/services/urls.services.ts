@@ -1,9 +1,8 @@
 import { urlVerify } from 'src/constants/regexp.constants'
 
-import { prismaClient as client } from '@/client'
-import msg from '@/messages'
-
-import { ClientError } from './../../types/index'
+import { prismaClient as client } from '@client'
+import { ClientError } from '@helpers/errors.helpers'
+import msg from '@messages'
 
 interface IUrl {
   originalUrl: string

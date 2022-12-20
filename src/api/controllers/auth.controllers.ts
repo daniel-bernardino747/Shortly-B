@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 
+import { ClientError } from '@helpers/errors.helpers'
+
 import { AuthenticateServices } from '../services/auth.services'
-import { ClientError } from './../../types/index'
 
 class AuthenticateController {
   async login(request: Request, response: Response) {

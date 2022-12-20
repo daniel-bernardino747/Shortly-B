@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
 
-// import { Messages } from '@/messages'
+import { ClientError } from '@helpers/errors.helpers'
 
 import { UserServices } from '../services/users.services'
-import { ClientError } from './../../types/index'
 
 class UserController {
   async create(request: Request, response: Response) {

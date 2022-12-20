@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 
+import { ClientError } from '@helpers/errors.helpers'
+
 import { URLsServices } from '../services/urls.services'
-import { ClientError } from './../../types/index'
 
 class URLsController {
   async create(request: Request, response: Response) {

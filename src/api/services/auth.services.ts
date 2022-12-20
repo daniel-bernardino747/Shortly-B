@@ -1,11 +1,11 @@
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 
-import { prismaClient as client } from '@/client'
-import msg from '@/messages'
+import { prismaClient as client } from '@client'
+import { ClientError } from '@helpers/errors.helpers'
+import msg from '@messages'
 
 import config from '../../config'
-import { ClientError } from './../../types/index'
 
 interface IRequest {
   email: string

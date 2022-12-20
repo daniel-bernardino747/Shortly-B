@@ -1,7 +1,7 @@
 import * as express from 'express'
-import { ensureAuthenticate } from 'src/api/middlewares/auth.middlewares'
 
-import { URLsController } from '@/controllers/urls.controllers'
+import { URLsController } from '@controllers/urls.controllers'
+import { ensureAuthenticate } from '@middlewares/auth.middlewares'
 
 const routes = express.Router()
 

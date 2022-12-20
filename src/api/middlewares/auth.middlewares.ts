@@ -2,10 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import { TokenExpiredError, verify } from 'jsonwebtoken'
 import config from 'src/config'
 
-import { prismaClient as client } from '@/client'
-import msg from '@/messages'
-
-import { ClientError } from './../../types/index'
+import { prismaClient as client } from '@client'
+import { ClientError } from '@helpers/errors.helpers'
+import msg from '@messages'
 
 async function ensureAuthenticate(
   request: Request,
