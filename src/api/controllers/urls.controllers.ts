@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import { ClientError } from '@helpers/errors.helpers'
+import { User } from '@prisma/client'
 import { IUrlsServices } from '@types'
 
 import { URLsServices } from '../services/urls.services'
@@ -14,7 +15,7 @@ class URLsController {
   // }
 
   public async create(request: Request, response: Response) {
-    const user = response.locals.user
+    const user: User = response.locals.user
     try {
       const { url: originalUrl } = request.body
 

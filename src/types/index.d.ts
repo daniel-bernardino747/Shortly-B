@@ -9,6 +9,19 @@ export type IUrlToFront = {
   shortUrl: string
   url: string
 }
+export type IUserToFront = {
+  id: number | undefined
+  name: string | undefined
+  visitCount: number | null
+  shortenedUrls:
+    | {
+        id: number
+        visited_count: number
+        shortened_url: string
+        original_url: string
+      }[]
+    | undefined
+}
 export interface ICreateShortUrl {
   userId: number
   originalUrl: string
@@ -49,4 +62,5 @@ export interface IUserServices {
     password,
     confirmPassword,
   }: IUserRequest): Promise<User | void>
+  getMe({ user }: { user: User }): Promise<IUserToFront | undefined>
 }

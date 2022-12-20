@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { TokenExpiredError, verify } from 'jsonwebtoken'
+import { JsonWebTokenError, TokenExpiredError, verify } from 'jsonwebtoken'
 import config from 'src/config'
 
 import { prismaClient as client } from '@client'
@@ -23,6 +23,8 @@ async function ensureAuthenticate(
         token,
       },
     })
+
+    if (!userLogged) throw new ClientError(msg.userNotFound)
     response.locals.user = userLogged
   } catch (e) {
     if (e instanceof ClientError) {
@@ -31,6 +33,10 @@ async function ensureAuthenticate(
     if (e instanceof TokenExpiredError) {
       return response.status(410).send({ error: { ...e } })
     }
+    if (e instanceof JsonWebTokenError) {
+      return response.status(401).send({ error: { ...e } })
+    }
+    console.error(e)
     return response.status(500).send({ error: e })
   }
   return next()
