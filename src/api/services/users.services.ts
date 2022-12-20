@@ -6,7 +6,12 @@ import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
 import { User } from '@prisma/client'
-import { IUserCreate, IUserRequest, IUserToFront } from '@types'
+import {
+  IRankingToFront,
+  IUserCreate,
+  IUserRequest,
+  IUserToFront,
+} from '@types'
 
 class UserServices {
   public async execute({
@@ -62,6 +67,28 @@ class UserServices {
       shortenedUrls: dbUser?.urls,
     }
     return userToFront
+  }
+  public async getRanking(): Promise<IRankingToFront[] | undefined> {
+    const ranking: IRankingToFront[] = await client.$queryRaw`
+      SELECT 
+        users.id, name, COUNT(urls.user_id) AS "linksCount", SUM(urls.visited_count) AS "visitCount"
+      FROM 
+        users
+      INNER JOIN 
+        urls ON urls.user_id=users.id
+      GROUP BY 
+        users.id, urls.user_id
+      ORDER BY 
+        "visitCount" ASC LIMIT 10;`
+
+    const updatedRanking = ranking.map((value) => {
+      return {
+        ...value,
+        linksCount: Number(value.linksCount),
+        visitCount: Number(value.visitCount),
+      }
+    })
+    return updatedRanking
   }
   private async findUser(email: string) {
     return client.user.findFirst({

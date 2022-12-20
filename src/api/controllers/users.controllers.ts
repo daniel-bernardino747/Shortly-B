@@ -49,6 +49,19 @@ class UserController {
       return response.status(500).send({ error: e })
     }
   }
+
+  public async ranking(request: Request, response: Response) {
+    try {
+      const ranking = await userServices.getRanking()
+      return response.status(200).send({ ranking })
+    } catch (e) {
+      if (e instanceof ClientError) {
+        return response.status(e.status).send({ error: { ...e } })
+      }
+      console.error(e)
+      return response.status(500).send({ error: e })
+    }
+  }
 }
 
 export { UserController }

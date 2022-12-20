@@ -22,6 +22,12 @@ export type IUserToFront = {
       }[]
     | undefined
 }
+export type IRankingToFront = {
+  id: number | undefined
+  name: string | undefined
+  linksCount: number | null
+  visitCount: number | null
+}
 export interface ICreateShortUrl {
   userId: number
   originalUrl: string
@@ -63,4 +69,5 @@ export interface IUserServices {
     confirmPassword,
   }: IUserRequest): Promise<User | void>
   getMe({ user }: { user: User }): Promise<IUserToFront | undefined>
+  getRanking(): Promise<IRankingToFront[] | undefined>
 }
