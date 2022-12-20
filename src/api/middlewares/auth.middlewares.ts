@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import { verify } from 'jsonwebtoken'
+import { TokenExpiredError, verify } from 'jsonwebtoken'
 import config from 'src/config'
 
-import msg, { Messages } from '@/messages'
+import { prismaClient as client } from '@/client'
+import msg from '@/messages'
+
+import { ClientError } from './../../types/index'
 
 async function ensureAuthenticate(
   request: Request,
@@ -11,20 +14,24 @@ async function ensureAuthenticate(
 ) {
   try {
     const authToken = request.headers.authorization
-    if (!authToken) throw msg.invalidHeader
+    if (!authToken) throw new ClientError(msg.invalidHeader)
     const token = authToken?.replace('Bearer ', '')
 
     verify(token, config.keyJWT as string)
+
+    const userLogged = await client.user.findFirst({
+      where: {
+        token,
+      },
+    })
+    response.locals.user = userLogged
   } catch (e) {
-    const error = e as Messages
-    if (error.status) {
-      return response.status(error.status).send({
-        status: 'Error',
-        code: error.status,
-        message: error.message,
-      })
+    if (e instanceof ClientError) {
+      return response.status(e.status).send({ error: { ...e } })
     }
-    console.error(e)
+    if (e instanceof TokenExpiredError) {
+      return response.status(410).send({ error: { ...e } })
+    }
     return response.status(500).send({ error: e })
   }
   return next()

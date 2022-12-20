@@ -5,6 +5,7 @@ import { prismaClient as client } from '@/client'
 import msg from '@/messages'
 
 import config from '../../config'
+import { ClientError } from './../../types/index'
 
 interface IRequest {
   email: string
@@ -13,14 +14,14 @@ interface IRequest {
 
 class AuthenticateServices {
   async execute({ email, password }: IRequest) {
-    if (!email && !password) throw msg.bodyNotMatch
+    if (!email && !password) throw new ClientError(msg.bodyNotMatch)
 
     const userExists = await this.findUser(email)
 
-    if (!userExists) throw msg.userNotExist
+    if (!userExists) throw new ClientError(msg.userNotExist)
 
     const passwordMatch = await compare(password, userExists.password)
-    if (!passwordMatch) throw msg.userNotExist
+    if (!passwordMatch) throw new ClientError(msg.userNotExist)
 
     const token = await this.createToken(userExists.id.toString())
 
@@ -35,10 +36,19 @@ class AuthenticateServices {
     })
   }
   async createToken(id: string) {
-    return sign({}, config.keyJWT as string, {
+    const token = sign({}, config.keyJWT as string, {
       subject: id,
       expiresIn: config.timeExpires,
     })
+    await client.user.update({
+      data: {
+        token,
+      },
+      where: {
+        id: Number(id),
+      },
+    })
+    return token
   }
 }
 

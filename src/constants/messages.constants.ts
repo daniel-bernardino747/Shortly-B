@@ -20,4 +20,8 @@ export default {
     status: 401,
     message: 'Authorization header was not informed.',
   } as Messages,
+  invalidURL: {
+    status: 422,
+    message: 'Provide a valid url.',
+  } as Messages,
 }

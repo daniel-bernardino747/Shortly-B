@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
 
-import { Messages } from '@/messages'
-
 import { AuthenticateServices } from '../services/auth.services'
+import { ClientError } from './../../types/index'
 
 class AuthenticateController {
   async login(request: Request, response: Response) {
@@ -18,15 +17,9 @@ class AuthenticateController {
 
       return response.status(200).send({ token })
     } catch (e) {
-      const error = e as Messages
-      if (error.status) {
-        return response.status(error.status).send({
-          status: 'Error',
-          code: error.status,
-          message: error.message,
-        })
+      if (e instanceof ClientError) {
+        return response.status(e.status).send({ error: { ...e } })
       }
-      console.error(e)
       return response.status(500).send({ error: e })
     }
   }
