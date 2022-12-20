@@ -56,6 +56,7 @@ export interface IUrlsServices {
     idParams: string
     idUser: number
   }): Promise<void>
+  urlOpen({ shortUrl }: { shortUrl: string }): Promise<string | undefined>
 }
 export interface IAuthServices {
   execute({ email, password }: IRequest): Promise<string>

@@ -56,6 +56,22 @@ class URLsServices {
     }
     return url
   }
+  public async urlOpen({
+    shortUrl,
+  }: {
+    shortUrl: string
+  }): Promise<string | undefined> {
+    console.log(shortUrl)
+    const url = await client.url.findFirst({
+      where: {
+        shortened_url: shortUrl,
+      },
+    })
+    console.log(url)
+    if (!url) throw new ClientError(msg.urlNotFound)
+
+    return url?.original_url
+  }
   public async deleteOne({
     idParams,
     idUser,

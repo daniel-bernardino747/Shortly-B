@@ -64,6 +64,21 @@ class URLsController {
       return response.status(500).send({ error: e })
     }
   }
+  public async redirect(request: Request, response: Response) {
+    try {
+      const shortUrl: string = request.params.shortUrl
+
+      const originalUrl = await urlsServices.urlOpen({ shortUrl })
+
+      return response.redirect(originalUrl as string)
+    } catch (e) {
+      if (e instanceof ClientError) {
+        return response.status(e.status).send({ error: { ...e } })
+      }
+      console.error(e)
+      return response.status(500).send({ error: e })
+    }
+  }
 }
 
 export { URLsController }
