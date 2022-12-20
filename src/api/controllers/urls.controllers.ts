@@ -32,6 +32,22 @@ class URLsController {
       return response.status(500).send({ error: e })
     }
   }
+
+  public async viewOne(request: Request, response: Response) {
+    try {
+      const idParams: string = request.params.id
+
+      const url = await urlsServices.viewOne({ idParams })
+
+      return response.status(200).send({ ...url })
+    } catch (e) {
+      if (e instanceof ClientError) {
+        return response.status(e.status).send({ error: { ...e } })
+      }
+      console.error(e)
+      return response.status(500).send({ error: e })
+    }
+  }
 }
 
 export { URLsController }

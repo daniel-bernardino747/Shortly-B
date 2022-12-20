@@ -3,7 +3,7 @@ import { urlVerify } from 'src/constants/regexp.constants'
 import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
-import { ICreateShortUrl, IUrl } from '@types'
+import { ICreateShortUrl, IUrl, IUrlToFront } from '@types'
 
 class URLsServices {
   public async execute({ originalUrl, id }: IUrl): Promise<string> {
@@ -28,6 +28,33 @@ class URLsServices {
         shortened_url: shortUrl,
       },
     })
+  }
+  public async viewOne({
+    idParams,
+  }: {
+    idParams: string
+  }): Promise<IUrlToFront | null> {
+    const id = Number(idParams)
+    if (isNaN(id)) throw new ClientError(msg.paramsNotMatch)
+
+    const urlDB = await client.url.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        shortened_url: true,
+        original_url: true,
+      },
+    })
+    if (!urlDB) throw new ClientError(msg.urlNotFound)
+
+    const url = {
+      id,
+      shortUrl: urlDB.shortened_url,
+      url: urlDB.original_url,
+    }
+    return url
   }
   public generateCode() {
     let text = ''

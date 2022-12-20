@@ -7,6 +7,8 @@ const routes = express.Router()
 
 const urlsController = new URLsController()
 
+routes.get('/urls/:id', urlsController.viewOne)
+
 routes.post('/url/shorten', ensureAuthenticate, urlsController.create)
 
 export default routes

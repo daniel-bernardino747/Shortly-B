@@ -4,6 +4,11 @@ export interface IUrl {
   originalUrl: string
   id: number
 }
+export type IUrlToFront = {
+  id: number
+  shortUrl: string
+  url: string
+}
 export interface ICreateShortUrl {
   userId: number
   originalUrl: string
@@ -24,6 +29,7 @@ export interface IUserRequest extends IUserCreate {
 
 export interface IUrlsServices {
   execute({ originalUrl, id }: IUrl): Promise<string>
+  viewOne({ idParams }: { idParams: string }): Promise<IUrlToFront | null>
 }
 export interface IAuthServices {
   execute({ email, password }: IRequest): Promise<string>

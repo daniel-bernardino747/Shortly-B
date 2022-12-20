@@ -12,6 +12,10 @@ export default {
     status: 422,
     message: 'The information in the body does not match.',
   } as Messages,
+  paramsNotMatch: {
+    status: 422,
+    message: 'The information in the parameters is incorrect.',
+  } as Messages,
   userNotExist: {
     status: 401,
     message: 'Incorrect email or password.',
@@ -19,6 +23,10 @@ export default {
   invalidHeader: {
     status: 401,
     message: 'Authorization header was not informed.',
+  } as Messages,
+  urlNotFound: {
+    status: 404,
+    message: 'Could not find this url.',
   } as Messages,
   invalidURL: {
     status: 422,
