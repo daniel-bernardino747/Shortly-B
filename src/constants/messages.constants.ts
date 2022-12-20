@@ -16,6 +16,10 @@ export default {
     status: 422,
     message: 'The information in the parameters is incorrect.',
   } as Messages,
+  urlAndUserNotMatch: {
+    status: 401,
+    message: 'Unable to delete a url that is not yours.',
+  } as Messages,
   userNotExist: {
     status: 401,
     message: 'Incorrect email or password.',

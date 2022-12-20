@@ -56,6 +56,38 @@ class URLsServices {
     }
     return url
   }
+  public async deleteOne({
+    idParams,
+    idUser,
+  }: {
+    idParams: string
+    idUser: number
+  }): Promise<void> {
+    const id = Number(idParams)
+    if (isNaN(id)) throw new ClientError(msg.paramsNotMatch)
+
+    const existingUrl = await client.url.findFirst({
+      where: {
+        id,
+      },
+    })
+    if (!existingUrl) throw new ClientError(msg.urlNotFound)
+
+    const isUrlOfUser = await client.url.findFirst({
+      where: {
+        id,
+        user_id: idUser,
+      },
+    })
+    if (!isUrlOfUser) throw new ClientError(msg.urlAndUserNotMatch)
+
+    const deletedUrl = await client.url.delete({
+      where: {
+        id,
+      },
+    })
+    if (!deletedUrl) throw new ClientError(msg.urlNotFound)
+  }
   public generateCode() {
     let text = ''
     const possible =
