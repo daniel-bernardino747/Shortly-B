@@ -5,17 +5,15 @@ import config from 'src/config'
 import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
+import { IUserCreate, IUserRequest } from '@types'
 
-interface IUserCreate {
-  name: string
-  email: string
-  password: string
-}
-interface IUserRequest extends IUserCreate {
-  confirmPassword: string
-}
 class UserServices {
-  async execute({ name, email, password, confirmPassword }: IUserRequest) {
+  public async execute({
+    name,
+    email,
+    password,
+    confirmPassword,
+  }: IUserRequest) {
     if (!name || !email || !password || !confirmPassword)
       throw new ClientError(msg.bodyNotMatch)
 
@@ -26,16 +24,14 @@ class UserServices {
 
     await this.createUser({ name, email, password })
   }
-
-  async findUser(email: string) {
+  private async findUser(email: string) {
     return client.user.findFirst({
       where: {
         email,
       },
     })
   }
-
-  async createUser({ name, email, password }: IUserCreate) {
+  private async createUser({ name, email, password }: IUserCreate) {
     const passwordHash = await hash(password, Number(config.hash))
     const user = await client.user.create({
       data: {

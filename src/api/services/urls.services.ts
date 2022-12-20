@@ -3,19 +3,10 @@ import { urlVerify } from 'src/constants/regexp.constants'
 import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
-
-interface IUrl {
-  originalUrl: string
-  id: number
-}
-interface ICreateShortUrl {
-  userId: number
-  originalUrl: string
-  shortUrl: string
-}
+import { ICreateShortUrl, IUrl } from '@types'
 
 class URLsServices {
-  async execute({ originalUrl, id }: IUrl) {
+  public async execute({ originalUrl, id }: IUrl): Promise<string> {
     const validUrl = urlVerify.test(originalUrl)
     if (!validUrl) throw new ClientError(msg.invalidURL)
 
@@ -29,7 +20,7 @@ class URLsServices {
 
     return shortUrl
   }
-  createUrl({ userId, originalUrl, shortUrl }: ICreateShortUrl) {
+  private async createUrl({ userId, originalUrl, shortUrl }: ICreateShortUrl) {
     return client.url.create({
       data: {
         user_id: userId,
@@ -38,7 +29,7 @@ class URLsServices {
       },
     })
   }
-  generateCode() {
+  public generateCode() {
     let text = ''
     const possible =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
