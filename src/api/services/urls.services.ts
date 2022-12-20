@@ -62,9 +62,14 @@ class URLsServices {
     shortUrl: string
   }): Promise<string | undefined> {
     console.log(shortUrl)
-    const url = await client.url.findFirst({
+    const url = await client.url.update({
       where: {
         shortened_url: shortUrl,
+      },
+      data: {
+        visited_count: {
+          increment: 1,
+        },
       },
     })
     console.log(url)
