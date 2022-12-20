@@ -17,7 +17,8 @@
       "@messages": ["src/constants/messages.constants"],
       "@controllers/*": ["src/api/controllers/*"],
       "@middlewares/*": ["src/api/middlewares/*"],
-      "@helpers/*": ["src/helpers/*"]
+      "@helpers/*": ["src/helpers/*"],
+      "@types": ["src/types/index"]
     },
     "baseUrl": "./"
   }
