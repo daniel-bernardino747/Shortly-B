@@ -15,10 +15,10 @@ class AuthenticateServices {
     console.log(1)
     const userExists = await this.findUser(email)
 
-    if (!userExists) throw new ClientError(msg.userNotExist)
+    if (!userExists) throw new ClientError(msg.invalidLogin)
 
     const passwordMatch = await compare(password, userExists.password)
-    if (!passwordMatch) throw new ClientError(msg.userNotExist)
+    if (!passwordMatch) throw new ClientError(msg.invalidLogin)
 
     const token = await this.createToken(userExists.id.toString())
     return token

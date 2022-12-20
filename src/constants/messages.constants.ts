@@ -20,7 +20,7 @@ export default {
     status: 401,
     message: 'Unable to delete a url that is not yours.',
   } as Messages,
-  userNotExist: {
+  invalidLogin: {
     status: 401,
     message: 'Incorrect email or password.',
   } as Messages,
@@ -31,6 +31,10 @@ export default {
   urlNotFound: {
     status: 404,
     message: 'Could not find this url.',
+  } as Messages,
+  userNotFound: {
+    status: 404,
+    message: 'Could not find this user.',
   } as Messages,
   invalidURL: {
     status: 422,
