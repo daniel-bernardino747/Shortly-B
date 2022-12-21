@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "start:dev": "nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register src/server.ts' -e ts",
-    "start": "node ./dist/server.js",
+    "start": "node -r tsconfig-paths/register ./dist/server.js",
     "husky": "husky install",
     "typeorm": "ts-node node_modules/.bin/typeorm",
     "migration:create": "cross-var npm run typeorm migration:create ./src/database/migrations/$npm_config_name"
