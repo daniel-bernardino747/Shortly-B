@@ -1,17 +1,18 @@
 import { prismaClient as client } from '@client'
 import { User } from '@prisma/client'
 
-import * as ts from './index.d'
+import * as ts from '@src/types/repositories'
+import { IRanking, IUserCreate } from '@src/types/services'
 
 export class UserRepository implements ts.IUserRepository {
-  public async findUser(email: string): Promise<User | null> {
+  public find(data: ts.ITemplateUser): Promise<User | null> {
     return client.user.findUnique({
       where: {
-        email,
+        ...data,
       },
     })
   }
-  public async updateUser(changes: ts.IUpdateUser, id: number): Promise<User> {
+  public update(changes: ts.ITemplateUser, id: number): Promise<User> {
     return client.user.update({
       data: {
         ...changes,
@@ -20,5 +21,54 @@ export class UserRepository implements ts.IUserRepository {
         id,
       },
     })
+  }
+  public create({ name, email, password }: IUserCreate): Promise<User> {
+    return client.user.create({
+      data: {
+        name,
+        email,
+        password,
+      },
+    })
+  }
+  public view(data: ts.ITemplateUser) {
+    return client.user.findUnique({
+      where: {
+        ...data,
+      },
+      select: {
+        id: true,
+        name: true,
+        urls: {
+          orderBy: {
+            created_at: 'desc',
+          },
+          select: {
+            id: true,
+            shortened_url: true,
+            original_url: true,
+            visited_count: true,
+          },
+        },
+      },
+    })
+  }
+  public rank(): Promise<IRanking[]> {
+    return client.$queryRaw`
+      SELECT 
+        users.id,
+        name,
+        COUNT(urls.user_id) AS "linksCount",
+        SUM(urls.visited_count) AS "visitCount"
+      FROM 
+        users
+      INNER JOIN 
+        urls ON urls.user_id=users.id
+      GROUP BY 
+        users.id, urls.user_id
+      ORDER BY 
+        "visitCount" ASC 
+      LIMIT 10;
+    `
   }
 }
