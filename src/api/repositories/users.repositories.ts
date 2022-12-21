@@ -67,7 +67,8 @@ export class UserRepository implements ts.IUserRepository {
       GROUP BY 
         users.id, urls.user_id
       ORDER BY 
-        "visitCount" ASC 
+        "visitCount" DESC,
+        "linksCount" DESC 
       LIMIT 10;
     `
   }
