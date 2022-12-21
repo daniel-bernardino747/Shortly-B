@@ -58,17 +58,20 @@ export class UserRepository implements ts.IUserRepository {
       SELECT 
         users.id,
         name,
-        COUNT(urls.user_id) AS "linksCount",
-        SUM(urls.visited_count) AS "visitCount"
+        SUM(
+          COALESCE(urls.visited_count, 0)
+        ) AS "visitCount",
+        COUNT(urls.user_id) AS "linksCount"
       FROM 
         users
-      INNER JOIN 
+      LEFT JOIN 
         urls ON urls.user_id=users.id
       GROUP BY 
         users.id, urls.user_id
       ORDER BY 
         "visitCount" DESC,
-        "linksCount" DESC 
+        "linksCount" DESC,
+        users.id ASC
       LIMIT 10;
     `
   }
