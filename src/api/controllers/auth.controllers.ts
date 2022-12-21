@@ -1,14 +1,15 @@
 import { Request, Response } from 'express'
 
+import { AuthServices } from '@services/auth.services'
+
 import { ClientError } from '@helpers/errors.helpers'
 
-import { IAuthServices } from '../services'
-import { AuthServices } from '../services/auth.services'
-import * as ts from './index.d'
+import { IAuthController } from '@src/types/controllers'
+import { IAuthServices } from '@src/types/services'
 
 const authServices: IAuthServices = new AuthServices()
 
-export class AuthController implements ts.IAuthController {
+export class AuthController implements IAuthController {
   public async login(request: Request, response: Response) {
     try {
       const { email, password } = request.body
