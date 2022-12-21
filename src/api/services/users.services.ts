@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken'
 
 import config from '@config'
 
+import { emailVerify } from '@constants/regexp.constants'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
 
@@ -34,6 +35,9 @@ export class UserServices implements ts.IUserServices {
       password !== confirmPassword
 
     if (bodyIncorrect) throw new ClientError(msg.bodyNotMatch)
+
+    const validEmail = emailVerify.test(email)
+    if (!validEmail) throw new ClientError(msg.invalidEmail)
 
     const userExists = await this.usersRepo.find({ email })
     if (userExists) throw new ClientError(msg.emailUnavailable)

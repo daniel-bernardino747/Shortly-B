@@ -36,6 +36,10 @@ export default {
     status: 404,
     message: 'Could not find this user.',
   } as Messages,
+  invalidEmail: {
+    status: 422,
+    message: 'Provide a valid email.',
+  } as Messages,
   invalidURL: {
     status: 422,
     message: 'Provide a valid url.',
