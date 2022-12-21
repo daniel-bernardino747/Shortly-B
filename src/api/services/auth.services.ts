@@ -1,50 +1,41 @@
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
+import config from 'src/config'
 
-import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
-import { IRequest } from '@types'
 
-import config from '../../config'
+import { UserRepository } from '../repositories/users.repositories'
+import * as ts from './index.d'
 
-class AuthenticateServices {
-  public async execute({ email, password }: IRequest) {
+export class AuthServices implements ts.IAuthServices {
+  private readonly UserRepo
+
+  constructor() {
+    this.UserRepo = new UserRepository()
+  }
+
+  public async authLogin({
+    email,
+    password,
+  }: ts.ILoginRequest): Promise<string | null> {
     if (!email && !password) throw new ClientError(msg.bodyNotMatch)
 
-    console.log(1)
-    const userExists = await this.findUser(email)
+    const userExists = await this.UserRepo.findUser(email)
 
     if (!userExists) throw new ClientError(msg.invalidLogin)
 
     const passwordMatch = await compare(password, userExists.password)
     if (!passwordMatch) throw new ClientError(msg.invalidLogin)
 
-    const token = await this.createToken(userExists.id.toString())
-    return token
+    return this.createToken(userExists.id.toString())
   }
-  private async findUser(email: string) {
-    return client.user.findFirst({
-      where: {
-        email,
-      },
-    })
-  }
-  private async createToken(id: string) {
+  private async createToken(idUser: string): Promise<string | null> {
     const token = sign({}, config.keyJWT as string, {
-      subject: id,
+      subject: idUser,
       expiresIn: config.timeExpires,
     })
-    await client.user.update({
-      data: {
-        token,
-      },
-      where: {
-        id: Number(id),
-      },
-    })
+    await this.UserRepo.updateUser({ token }, Number(idUser))
     return token
   }
 }
-
-export { AuthenticateServices }

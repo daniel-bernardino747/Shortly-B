@@ -1,23 +1,18 @@
 import { Request, Response } from 'express'
 
 import { ClientError } from '@helpers/errors.helpers'
-import { IAuthServices } from '@types'
 
-import { AuthenticateServices } from '../services/auth.services'
+import { IAuthServices } from '../services'
+import { AuthServices } from '../services/auth.services'
+import * as ts from './index.d'
 
-const authServices: IAuthServices = new AuthenticateServices()
+const authServices: IAuthServices = new AuthServices()
 
-class AuthenticateController {
-  // private readonly authServices: IAuthServices
-
-  // constructor() {
-  //   this.authServices = new AuthenticateServices()
-  // }
-
+export class AuthController implements ts.IAuthController {
   public async login(request: Request, response: Response) {
     try {
       const { email, password } = request.body
-      const token = await authServices.execute({
+      const token = await authServices.authLogin({
         email,
         password,
       })
@@ -32,5 +27,3 @@ class AuthenticateController {
     }
   }
 }
-
-export { AuthenticateController }
