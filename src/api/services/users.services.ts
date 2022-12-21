@@ -79,7 +79,7 @@ export class UserServices implements ts.IUserServices {
     const passwordHash = await hash(newUser.password, Number(config.hash))
     const user = await this.usersRepo.create({
       name: newUser.name,
-      email: newUser.email,
+      email: newUser.email.toLowerCase(),
       password: passwordHash,
     })
 
