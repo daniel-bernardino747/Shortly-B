@@ -5,7 +5,7 @@ import { IUrlCreate } from '@src/types/services'
 
 export class UrlRepository implements IUrlRepository {
   public find(data: ITemplateUrl) {
-    return client.url.findUnique({
+    return client.url.findFirst({
       where: {
         ...data,
       },
