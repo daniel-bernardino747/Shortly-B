@@ -32,7 +32,7 @@
             "/^@repositories/",
             "/^@middlewares/"
           ],
-          ["/^@helpers/", "/@messages/"],
+          ["/^@helpers/", "/@messages/", "/^@constants/"],
           "/^@src/types/",
           ["parent", "sibling", "index"]
         ],

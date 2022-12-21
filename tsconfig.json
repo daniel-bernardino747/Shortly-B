@@ -20,6 +20,7 @@
       "@middlewares/*": ["src/api/middlewares/*"],
       "@services/*": ["src/api/services/*"],
       "@helpers/*": ["src/helpers/*"],
+      "@constants/*": ["src/constants/*"],
       "@src/types/*": ["src/types/*"]
     },
     "baseUrl": "./"
