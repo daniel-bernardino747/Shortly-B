@@ -3,6 +3,7 @@ import { sign } from 'jsonwebtoken'
 
 import config from '@config'
 
+import { emailVerify } from '@constants/regexp.constants'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
 
@@ -22,6 +23,9 @@ export class AuthServices implements IAuthServices {
     password,
   }: ILoginRequest): Promise<string | null> {
     if (!email && !password) throw new ClientError(msg.bodyNotMatch)
+
+    const validEmail = emailVerify.test(email)
+    if (!validEmail) throw new ClientError(msg.invalidEmail)
 
     const userExists = await this.UserRepo.find({ email })
 
