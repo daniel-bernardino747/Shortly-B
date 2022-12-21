@@ -1,14 +1,16 @@
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
-import config from 'src/config'
+
+import config from '@config'
 
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
 
-import { UserRepository } from '../repositories/users.repositories'
-import * as ts from './index.d'
+import { IAuthServices, ILoginRequest } from '@src/types/services'
 
-export class AuthServices implements ts.IAuthServices {
+import { UserRepository } from '../repositories/users.repositories'
+
+export class AuthServices implements IAuthServices {
   private readonly UserRepo
 
   constructor() {
@@ -18,10 +20,10 @@ export class AuthServices implements ts.IAuthServices {
   public async authLogin({
     email,
     password,
-  }: ts.ILoginRequest): Promise<string | null> {
+  }: ILoginRequest): Promise<string | null> {
     if (!email && !password) throw new ClientError(msg.bodyNotMatch)
 
-    const userExists = await this.UserRepo.findUser(email)
+    const userExists = await this.UserRepo.find({ email })
 
     if (!userExists) throw new ClientError(msg.invalidLogin)
 
@@ -35,7 +37,7 @@ export class AuthServices implements ts.IAuthServices {
       subject: idUser,
       expiresIn: config.timeExpires,
     })
-    await this.UserRepo.updateUser({ token }, Number(idUser))
+    await this.UserRepo.update({ token }, Number(idUser))
     return token
   }
 }

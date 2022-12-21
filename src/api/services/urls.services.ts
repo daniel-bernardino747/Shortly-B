@@ -1,81 +1,49 @@
 import { urlVerify } from 'src/constants/regexp.constants'
 
-import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
-import { ICreateShortUrl, IUrl, IUrlToFront } from '@types'
 
-class URLsServices {
-  public async execute({ originalUrl, id }: IUrl): Promise<string> {
+import * as ts from '@src/types/services'
+
+import { UrlRepository } from '../repositories/urls.repositories'
+
+export class URLsServices implements ts.IUrlsServices {
+  private readonly urlRepo
+
+  constructor() {
+    this.urlRepo = new UrlRepository()
+  }
+
+  public async create({ originalUrl, id }: ts.IUrl): Promise<string> {
     const validUrl = urlVerify.test(originalUrl)
     if (!validUrl) throw new ClientError(msg.invalidURL)
 
     const shortUrl = this.generateCode()
 
-    await this.createUrl({
-      userId: id,
-      originalUrl,
-      shortUrl,
+    await this.urlRepo.create({
+      user_id: id,
+      shortened_url: shortUrl,
+      original_url: originalUrl,
     })
 
     return shortUrl
-  }
-  private async createUrl({ userId, originalUrl, shortUrl }: ICreateShortUrl) {
-    return client.url.create({
-      data: {
-        user_id: userId,
-        original_url: originalUrl,
-        shortened_url: shortUrl,
-      },
-    })
   }
   public async viewOne({
     idParams,
   }: {
     idParams: string
-  }): Promise<IUrlToFront | null> {
+  }): Promise<ts.IUrlToFront | null> {
     const id = Number(idParams)
     if (isNaN(id)) throw new ClientError(msg.paramsNotMatch)
 
-    const urlDB = await client.url.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        shortened_url: true,
-        original_url: true,
-      },
-    })
-    if (!urlDB) throw new ClientError(msg.urlNotFound)
+    const dbUrl = await this.urlRepo.view({ id })
+    if (!dbUrl) throw new ClientError(msg.urlNotFound)
 
-    const url = {
+    return {
       id,
-      shortUrl: urlDB.shortened_url,
-      url: urlDB.original_url,
+      shortUrl: dbUrl.shortened_url,
+      url: dbUrl.original_url,
     }
-    return url
-  }
-  public async urlOpen({
-    shortUrl,
-  }: {
-    shortUrl: string
-  }): Promise<string | undefined> {
-    console.log(shortUrl)
-    const url = await client.url.update({
-      where: {
-        shortened_url: shortUrl,
-      },
-      data: {
-        visited_count: {
-          increment: 1,
-        },
-      },
-    })
-    console.log(url)
-    if (!url) throw new ClientError(msg.urlNotFound)
-
-    return url?.original_url
   }
   public async deleteOne({
     idParams,
@@ -87,29 +55,26 @@ class URLsServices {
     const id = Number(idParams)
     if (isNaN(id)) throw new ClientError(msg.paramsNotMatch)
 
-    const existingUrl = await client.url.findFirst({
-      where: {
-        id,
-      },
-    })
+    const existingUrl = await this.urlRepo.find({ id })
     if (!existingUrl) throw new ClientError(msg.urlNotFound)
 
-    const isUrlOfUser = await client.url.findFirst({
-      where: {
-        id,
-        user_id: idUser,
-      },
-    })
+    const isUrlOfUser = await this.urlRepo.find({ id, user_id: idUser })
     if (!isUrlOfUser) throw new ClientError(msg.urlAndUserNotMatch)
 
-    const deletedUrl = await client.url.delete({
-      where: {
-        id,
-      },
-    })
+    const deletedUrl = await this.urlRepo.delete({ id })
     if (!deletedUrl) throw new ClientError(msg.urlNotFound)
   }
-  public generateCode() {
+  public async openShortUrl({
+    shortUrl,
+  }: {
+    shortUrl: string
+  }): Promise<string | undefined> {
+    const url = await this.urlRepo.increment({ shortened_url: shortUrl })
+    if (!url) throw new ClientError(msg.urlNotFound)
+
+    return url?.original_url
+  }
+  private generateCode() {
     let text = ''
     const possible =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -118,4 +83,3 @@ class URLsServices {
     return text
   }
 }
-export { URLsServices }

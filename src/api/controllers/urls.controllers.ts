@@ -1,39 +1,16 @@
+import { User } from '@prisma/client'
 import { Request, Response } from 'express'
 
 import { ClientError } from '@helpers/errors.helpers'
-import { User } from '@prisma/client'
-import { IUrlsServices } from '@types'
+
+import { IUrlController } from '@src/types/controllers'
+import { IUrlsServices } from '@src/types/services'
 
 import { URLsServices } from '../services/urls.services'
 
 const urlsServices: IUrlsServices = new URLsServices()
-class URLsController {
-  // private readonly urlsServices: IUrlsServices
-
-  // constructor() {
-  //   this.urlsServices = new URLsServices()
-  // }
-
-  public async create(request: Request, response: Response) {
-    const user: User = response.locals.user
-    try {
-      const { url: originalUrl } = request.body
-
-      const shortUrl = urlsServices.execute({
-        originalUrl,
-        id: user.id,
-      })
-
-      return response.status(201).send({ shortUrl })
-    } catch (e) {
-      if (e instanceof ClientError) {
-        return response.status(e.status).send({ error: { ...e } })
-      }
-      console.error(e)
-      return response.status(500).send({ error: e })
-    }
-  }
-  public async viewOne(request: Request, response: Response) {
+export class URLsController implements IUrlController {
+  public async view(request: Request, response: Response) {
     try {
       const idParams: string = request.params.id
 
@@ -48,7 +25,26 @@ class URLsController {
       return response.status(500).send({ error: e })
     }
   }
-  public async deleteOne(request: Request, response: Response) {
+  public async create(request: Request, response: Response) {
+    const user: User = response.locals.user
+    try {
+      const { url: originalUrl } = request.body
+
+      const shortUrl = await urlsServices.create({
+        originalUrl,
+        id: user.id,
+      })
+
+      return response.status(201).send({ shortUrl })
+    } catch (e) {
+      if (e instanceof ClientError) {
+        return response.status(e.status).send({ error: { ...e } })
+      }
+      console.error(e)
+      return response.status(500).send({ error: e })
+    }
+  }
+  public async delete(request: Request, response: Response) {
     try {
       const idParams: string = request.params.id
       const { id: idUser }: { id: number } = response.locals.user
@@ -68,7 +64,7 @@ class URLsController {
     try {
       const shortUrl: string = request.params.shortUrl
 
-      const originalUrl = await urlsServices.urlOpen({ shortUrl })
+      const originalUrl = await urlsServices.openShortUrl({ shortUrl })
 
       return response.redirect(originalUrl as string)
     } catch (e) {
@@ -80,5 +76,3 @@ class URLsController {
     }
   }
 }
-
-export { URLsController }
