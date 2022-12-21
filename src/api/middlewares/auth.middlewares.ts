@@ -37,6 +37,9 @@ async function ensureAuthenticate(
     if (e instanceof JsonWebTokenError) {
       return response.status(401).send({ error: { ...e } })
     }
+    if (e instanceof SyntaxError) {
+      return response.status(401).send({ error: 'Invalid syntax.' })
+    }
     console.error(e)
     return response.status(500).send({ error: e })
   }
