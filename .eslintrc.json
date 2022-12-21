@@ -22,20 +22,7 @@
       "warn",
       {
         "newlinesBetween": "always",
-        "groups": [
-          "module",
-          "/^@config/",
-          [
-            "/^@routes/",
-            "/^@controllers/",
-            "/^@services/",
-            "/^@repositories/",
-            "/^@middlewares/"
-          ],
-          ["/^@helpers/", "/@messages/"],
-          "/^@src/types/",
-          ["parent", "sibling", "index"]
-        ],
+        "groups": ["module", "/^@/", ["parent", "sibling", "index"]],
         "alphabetize": { "order": "asc", "ignoreCase": true }
       }
     ]

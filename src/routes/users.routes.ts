@@ -9,6 +9,6 @@ const usersController = new UserController()
 
 routes.get('/ranking', usersController.ranking)
 
-routes.get('/users/me', ensureAuthenticate, usersController.view)
+routes.get('/users/me', ensureAuthenticate, usersController.getMe)
 
 export default routes

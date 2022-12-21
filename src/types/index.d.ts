@@ -1,20 +1,5 @@
-export interface IUserCreate {
-  name: string
-  email: string
-  password: string
-}
-export interface IUrlCreate {
-  user_id: number
-  original_url: string
-  shortened_url: string
-}
-export interface ILoginRequest {
-  email: string
-  password: string
-}
-export interface IUserRequest extends IUserCreate {
-  confirmPassword: string
-}
+import { User } from '@prisma/client'
+
 export interface IUrl {
   originalUrl: string
   id: number
@@ -24,17 +9,7 @@ export type IUrlToFront = {
   shortUrl: string
   url: string
 }
-export interface IUserInfos {
-  id: number
-  name: string
-  urls: {
-    id: number
-    shortened_url: string
-    original_url: string
-    visited_count: number
-  }[]
-}
-export type IUser = {
+export type IUserToFront = {
   id: number | undefined
   name: string | undefined
   visitCount: number | null
@@ -47,7 +22,7 @@ export type IUser = {
       }[]
     | undefined
 }
-export type IRanking = {
+export type IRankingToFront = {
   id: number | undefined
   name: string | undefined
   linksCount: number | null
@@ -58,12 +33,21 @@ export interface ICreateShortUrl {
   originalUrl: string
   shortUrl: string
 }
-
-export interface IAuthServices {
-  authLogin({ email, password }: IRequest): Promise<string | null>
+export interface IRequest {
+  email: string
+  password: string
 }
+export interface IUserCreate {
+  name: string
+  email: string
+  password: string
+}
+export interface IUserRequest extends IUserCreate {
+  confirmPassword: string
+}
+
 export interface IUrlsServices {
-  create({ originalUrl, id }: IUrl): Promise<string>
+  execute({ originalUrl, id }: IUrl): Promise<string>
   viewOne({ idParams }: { idParams: string }): Promise<IUrlToFront | null>
   deleteOne({
     idParams,
@@ -72,15 +56,19 @@ export interface IUrlsServices {
     idParams: string
     idUser: number
   }): Promise<void>
-  openShortUrl({ shortUrl }: { shortUrl: string }): Promise<string | undefined>
+  urlOpen({ shortUrl }: { shortUrl: string }): Promise<string | undefined>
 }
+export interface IAuthServices {
+  execute({ email, password }: IRequest): Promise<string>
+}
+
 export interface IUserServices {
-  create({
+  execute({
     name,
     email,
     password,
     confirmPassword,
   }: IUserRequest): Promise<User | void>
-  viewOne({ authUser }: { authUser: User }): Promise<IUserToFront | undefined>
-  viewRanking(): Promise<IRankingToFront[] | undefined>
+  getMe({ user }: { user: User }): Promise<IUserToFront | undefined>
+  getRanking(): Promise<IRankingToFront[] | undefined>
 }

@@ -7,12 +7,12 @@ const routes = express.Router()
 
 const urlsController = new URLsController()
 
-routes.get('/urls/:id', urlsController.view)
-
-routes.delete('/urls/:id', ensureAuthenticate, urlsController.delete)
-
-routes.post('/url/shorten', ensureAuthenticate, urlsController.create)
+routes.get('/urls/:id', urlsController.viewOne)
 
 routes.get('/urls/open/:shortUrl', urlsController.redirect)
+
+routes.delete('/urls/:id', ensureAuthenticate, urlsController.deleteOne)
+
+routes.post('/url/shorten', ensureAuthenticate, urlsController.create)
 
 export default routes

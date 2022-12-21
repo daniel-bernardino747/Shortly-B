@@ -1,12 +1,12 @@
 import * as express from 'express'
 
-import { AuthController } from '@controllers/auth.controllers'
+import { AuthenticateController } from '@controllers/auth.controllers'
 import { UserController } from '@controllers/users.controllers'
 
 const routes = express.Router()
 
 const userController = new UserController()
-const authController = new AuthController()
+const authController = new AuthenticateController()
 
 routes.post('/signup', userController.create)
 

@@ -1,91 +1,129 @@
-import { User } from '@prisma/client'
 import { hash } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
+import config from 'src/config'
 
-import config from '@config'
-
+import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
+import { User } from '@prisma/client'
+import {
+  IRankingToFront,
+  IUserCreate,
+  IUserRequest,
+  IUserToFront,
+} from '@types'
 
-import * as ts from '@src/types/services'
-
-import { UrlRepository } from '../repositories/urls.repositories'
-import { UserRepository } from '../repositories/users.repositories'
-
-export class UserServices implements ts.IUserServices {
-  private readonly usersRepo
-  private readonly urlsRepo
-
-  constructor() {
-    this.usersRepo = new UserRepository()
-    this.urlsRepo = new UrlRepository()
-  }
-  public async create({
+class UserServices {
+  public async execute({
     name,
     email,
     password,
     confirmPassword,
-  }: ts.IUserRequest) {
-    const bodyIncorrect =
-      !name ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      password !== confirmPassword
+  }: IUserRequest) {
+    if (!name || !email || !password || !confirmPassword)
+      throw new ClientError(msg.bodyNotMatch)
 
-    if (bodyIncorrect) throw new ClientError(msg.bodyNotMatch)
-
-    const userExists = await this.usersRepo.find({ email })
+    const userExists = await this.findUser(email)
     if (userExists) throw new ClientError(msg.emailUnavailable)
+
+    if (password !== confirmPassword) throw new ClientError(msg.bodyNotMatch)
 
     await this.createUser({ name, email, password })
   }
-  public async viewOne({
-    authUser,
+  public async getMe({
+    user,
   }: {
-    authUser: User
-  }): Promise<ts.IUser | undefined> {
-    const dbUser = await this.usersRepo.view({ id: authUser.id })
-    const { id, name, urls } = dbUser as ts.IUserInfos
-
-    const {
-      _sum: { visited_count: visitCount },
-    } = await this.urlsRepo.sumVisitedUrls(authUser.id)
-
-    return {
-      id,
-      name,
-      visitCount,
-      shortenedUrls: urls,
+    user: User
+  }): Promise<IUserToFront | undefined> {
+    const aggregationVisits = await client.url.aggregate({
+      _sum: {
+        visited_count: true,
+      },
+      where: {
+        user_id: user.id,
+      },
+    })
+    const dbUser = await client.user.findFirst({
+      where: {
+        id: user.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        urls: {
+          select: {
+            id: true,
+            shortened_url: true,
+            original_url: true,
+            visited_count: true,
+          },
+        },
+      },
+    })
+    const userToFront = {
+      id: dbUser?.id,
+      name: dbUser?.name,
+      visitCount: aggregationVisits._sum.visited_count,
+      shortenedUrls: dbUser?.urls,
     }
+    return userToFront
   }
-  public async viewRanking(): Promise<ts.IRanking[] | undefined> {
-    const dbRanking: ts.IRanking[] = await this.usersRepo.rank()
+  public async getRanking(): Promise<IRankingToFront[] | undefined> {
+    const ranking: IRankingToFront[] = await client.$queryRaw`
+      SELECT 
+        users.id, name, COUNT(urls.user_id) AS "linksCount", SUM(urls.visited_count) AS "visitCount"
+      FROM 
+        users
+      INNER JOIN 
+        urls ON urls.user_id=users.id
+      GROUP BY 
+        users.id, urls.user_id
+      ORDER BY 
+        "visitCount" ASC LIMIT 10;`
 
-    const ranking = dbRanking.map((value) => {
+    const updatedRanking = ranking.map((value) => {
       return {
         ...value,
         linksCount: Number(value.linksCount),
         visitCount: Number(value.visitCount),
       }
     })
-    return ranking
+    return updatedRanking
   }
-  private async createUser(newUser: ts.IUserCreate) {
-    const passwordHash = await hash(newUser.password, Number(config.hash))
-    const user = await this.usersRepo.create({
-      name: newUser.name,
-      email: newUser.email,
-      password: passwordHash,
+  private async findUser(email: string) {
+    return client.user.findFirst({
+      where: {
+        email,
+      },
+    })
+  }
+  private async createUser({ name, email, password }: IUserCreate) {
+    const passwordHash = await hash(password, Number(config.hash))
+    const user = await client.user.create({
+      data: {
+        name,
+        email,
+        password: passwordHash,
+      },
     })
 
     const firstToken = sign({}, config.keyJWT as string, {
       subject: user.id.toString(),
       expiresIn: config.timeExpires,
     })
+    await client.user.update({
+      data: {
+        token: firstToken,
+      },
+      where: {
+        id: user.id,
+      },
+    })
 
-    await this.usersRepo.update({ token: firstToken }, user.id)
+    user.token = firstToken
 
     return user
   }
 }
+
+export { UserServices }

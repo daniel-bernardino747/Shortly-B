@@ -1,9 +1,8 @@
-import { prismaClient as client } from '@client'
 import { NextFunction, Request, Response } from 'express'
 import { JsonWebTokenError, TokenExpiredError, verify } from 'jsonwebtoken'
+import config from 'src/config'
 
-import config from '@config'
-
+import { prismaClient as client } from '@client'
 import { ClientError } from '@helpers/errors.helpers'
 import msg from '@messages'
 
