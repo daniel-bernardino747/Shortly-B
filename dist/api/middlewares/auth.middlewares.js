@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ensureAuthenticate = void 0;
-const _client_1 = require("@client");
+const _client_1 = require("../../prisma/prisma.client");
 const jsonwebtoken_1 = require("jsonwebtoken");
-const _config_1 = require("@config");
-const errors_helpers_1 = require("@helpers/errors.helpers");
-const _messages_1 = require("@messages");
+const _config_1 = require("../../config");
+const errors_helpers_1 = require("../../helpers/errors.helpers");
+const _messages_1 = require("../../constants/messages.constants");
 async function ensureAuthenticate(request, response, next) {
     try {
         const authToken = request.headers.authorization;

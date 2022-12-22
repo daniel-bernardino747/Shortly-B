@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.URLsController = void 0;
-const errors_helpers_1 = require("@helpers/errors.helpers");
+const errors_helpers_1 = require("../../helpers/errors.helpers");
 const urls_services_1 = require("../services/urls.services");
 const urlsServices = new urls_services_1.URLsServices();
 class URLsController {

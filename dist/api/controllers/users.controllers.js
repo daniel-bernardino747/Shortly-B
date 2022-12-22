@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
-const users_services_1 = require("@services/users.services");
-const errors_helpers_1 = require("@helpers/errors.helpers");
+const users_services_1 = require("../services/users.services");
+const errors_helpers_1 = require("../../helpers/errors.helpers");
 const userServices = new users_services_1.UserServices();
 class UserController {
     async view(request, response) {

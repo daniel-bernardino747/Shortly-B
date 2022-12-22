@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
-const _client_1 = require("@client");
+const _client_1 = require("../../prisma/prisma.client");
 class UserRepository {
     find(data) {
         return _client_1.prismaClient.user.findUnique({

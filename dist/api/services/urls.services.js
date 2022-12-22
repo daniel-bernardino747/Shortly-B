@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.URLsServices = void 0;
-const regexp_constants_1 = require("src/constants/regexp.constants");
-const errors_helpers_1 = require("@helpers/errors.helpers");
-const _messages_1 = require("@messages");
+const regexp_constants_1 = require("../../constants/regexp.constants");
+const errors_helpers_1 = require("../../helpers/errors.helpers");
+const _messages_1 = require("../../constants/messages.constants");
 const urls_repositories_1 = require("../repositories/urls.repositories");
 class URLsServices {
     constructor() {

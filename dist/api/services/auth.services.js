@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const bcryptjs_1 = require("bcryptjs");
 const jsonwebtoken_1 = require("jsonwebtoken");
-const _config_1 = require("@config");
-const regexp_constants_1 = require("@constants/regexp.constants");
-const errors_helpers_1 = require("@helpers/errors.helpers");
-const _messages_1 = require("@messages");
+const _config_1 = require("../../config");
+const regexp_constants_1 = require("../../constants/regexp.constants");
+const errors_helpers_1 = require("../../helpers/errors.helpers");
+const _messages_1 = require("../../constants/messages.constants");
 const users_repositories_1 = require("../repositories/users.repositories");
 class AuthServices {
     constructor() {
