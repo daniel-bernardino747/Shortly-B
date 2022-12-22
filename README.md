@@ -30,11 +30,9 @@ ______
 </h4>
 
 <p align="center">
- <a href="#Shortly-API">Início</a> •
- <a href="#Requisitos">Começando</a> • 
- <a href="#Tecnologias">Tecnologias</a> • 
- <a href="#contribuicao">Contribuição</a> • 
- <a href="#licenc-a">Licença</a> • 
+ <a href="#shortly-api">Início</a> • 
+ <a href="#requisitos">Começando</a> •  
+ <a href="#tecnologias">Tecnologias</a> • 
  <a href="#autor">Autor</a>
 </p>
 ______
@@ -94,7 +92,7 @@ Em caso de sucesso, está mensagem aparecerá:
 🌀 started server in door: 4000
 ```
 
-### Tecnologias
+## Tecnologias
 
 🛠 As seguintes ferramentas foram usadas na construção do projeto:
 
@@ -113,7 +111,7 @@ Bibliotecas utilizadas para padronização e/ou facilitação:
 
 ---
 
-### Autor
+## Autor
 
 <a href="https://github.com/daniel-bernardino747">
  <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/106272711?v=4" width="100px;" alt=""/>
